@@ -13,6 +13,9 @@
     <div class="hud-body">
         <div class="welcome-card">
 
+            {# flash d'inscription, consommé ici et plus au questionnaire #}
+            {% include 'structure/flashes.html.twig' %}
+
             <span class="avatar avatar--lg">
                 <img
                     src="{{ asset(avatar(pseudo)) }}"
@@ -21,7 +24,7 @@
             </span>
 
             <div class="welcome-score">
-                Score&nbsp;: <strong>0</strong> pt
+                Score&nbsp;: <strong>0</strong> point
             </div>
 
             <a href="{{ path('app_questionnaire') }}" class="btn-continuer">

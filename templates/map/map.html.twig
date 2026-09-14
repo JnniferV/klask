@@ -47,16 +47,17 @@
                 >
                 <div class="map-overlays" id="map-overlays" aria-live="polite">
                     <p class="map-loading" id="map-loading">Chargement…</p>
-
-                    <div id="activity-bubble" class="activity-bubble" hidden>
-                        <button id="btn-close-bubble" class="btn-close-bubble" aria-label="Fermer">✕</button>
-                        <p id="bubble-name" class="bubble-name"></p>
-                        <p id="bubble-desc" class="bubble-desc"></p>
-                        {% if is_granted('ROLE_STUDENT') %}<p id="bubble-points" class="bubble-points" hidden></p>{% endif %}
-                        <p id="bubble-wait" class="bubble-wait"></p>
-                    </div>
                 </div>
             </div>
+        </div>
+
+        {# hors de .map-canvas, sinon le zoom fausse le position fixed #}
+        <div id="activity-bubble" class="activity-bubble" hidden>
+            <button id="btn-close-bubble" class="btn-close-bubble" aria-label="Fermer">✕</button>
+            <p id="bubble-name" class="bubble-name"></p>
+            <p id="bubble-desc" class="bubble-desc"></p>
+            {% if is_granted('ROLE_STUDENT') %}<p id="bubble-points" class="bubble-points" hidden></p>{% endif %}
+            <p id="bubble-wait" class="bubble-wait"></p>
         </div>
 
         {% if not is_granted('ROLE_ADMIN') %}

@@ -13,7 +13,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[UniqueEntity(fields: ['code'], message: 'Ce code de groupe est déjà utilisé.')]
 class Group
 {
-    public const LEVELS = ['Troisième', 'Seconde', 'Première', 'Terminale'];
+    // source unique des niveaux, ordre des listes déroulantes
+    public const LEVELS = ['CM2', 'Sixième', 'Cinquième', 'Quatrième', 'Troisième', 'Seconde', 'Première', 'Terminale'];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

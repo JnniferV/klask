@@ -8,8 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 #[Assert\Expression(
-    "this.getRecipientType() != 'class' or this.getRecipientValue()",
-    message: 'Renseignez le code classe pour le destinataire « Classe ».',
+    "this.getRecipientType() not in ['class', 'establishment'] or this.getRecipientValue()",
+    message: 'Renseignez le code classe ou l\'ID établissement selon le destinataire choisi.',
 )]
 class Notification
 {
@@ -152,6 +152,7 @@ class Notification
             'student' => 'event-alert/student',
             'accompagnateur' => 'event-alert/accompagnateur',
             'class' => 'event-alert/class/'.($this->recipientValue ?? ''),
+            'establishment' => 'event-alert/establishment/'.($this->recipientValue ?? ''),
             default => 'event-alert',
         };
     }

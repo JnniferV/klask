@@ -140,7 +140,7 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('Klask — Admin')
-            ->setFaviconPath('favicon.ico')
+            ->setFaviconPath('images/faviconklask.webp')
             ->renderContentMaximized();
     }
 

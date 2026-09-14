@@ -28,8 +28,8 @@ class MapController extends AbstractController
         'dark' => 'images/instructionsaccompagnateursombre.webp',
     ];
     private const IMG_STUDENT = [
-        'light' => 'images/instructions_student.webp',
-        'dark' => 'images/instructions_student.webp',
+        'light' => 'images/instructionsvisiteurclair.webp',
+        'dark' => 'images/instructionsvisiteursombre.webp',
     ];
 
     public function __construct(

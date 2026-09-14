@@ -223,5 +223,3 @@ l'étape 6.
 | Docker incohérent             | Section **Repartir de zéro** ci-dessus                                                     |
 
 ---
-
-Docs complémentaires : `docs/DEPLOIEMENT.md` (prod), `docs/AVATARS.md`, `docs/LANCEMENT.md`.

@@ -221,3 +221,7 @@ l'étape 6.
 | CSS / JS pas à jour (mobile)  | Ctrl+F5 ; si `public/assets/` existe : le supprimer ou `php bin/console asset-map:compile` |
 | Tous les élèves même avatar   | Normal sans livraison complète — `app:avatars:check` ; voir `docs/AVATARS.md`              |
 | Docker incohérent             | Section **Repartir de zéro** ci-dessus                                                     |
+
+---
+
+Docs complémentaires : `docs/DEPLOIEMENT.md` (prod), `docs/AVATARS.md`, `docs/LANCEMENT.md`.

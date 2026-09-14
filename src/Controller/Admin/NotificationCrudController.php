@@ -2,7 +2,9 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Establishment;
 use App\Entity\Notification;
+use App\Repository\EstablishmentRepository;
 use App\Service\RealtimeNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -26,6 +28,7 @@ class NotificationCrudController extends AbstractCrudController
         private readonly RealtimeNotifier $notifier,
         private readonly EntityManagerInterface $em,
         private readonly AdminUrlGenerator $urlGenerator,
+        private readonly EstablishmentRepository $establishments,
     ) {
     }
 
@@ -83,14 +86,25 @@ class NotificationCrudController extends AbstractCrudController
                 'Étudiants' => 'student',
                 'Accompagnateurs' => 'accompagnateur',
                 'Classe' => 'class',
+                'Établissement' => 'establishment',
             ]);
         yield TextField::new('recipientValue', 'Valeur destinataire')
             ->setRequired(false)
-            ->setHelp('Code classe pour "Classe". Laisser vide sinon.');
+            ->setHelp('Code classe pour « Classe », ID pour « Établissement » ('.$this->establishmentList().'). Laisser vide sinon.');
         yield DateTimeField::new('scheduledAt', 'Envoi programmé')->setRequired(false)
             ->setHelp('Laisser vide pour envoyer manuellement.');
         yield DateTimeField::new('sentAt', 'Envoyé le')->onlyOnIndex()->setDisabled(true);
         yield DateTimeField::new('createdAt', 'Créé le')->onlyOnIndex()->setDisabled(true);
+    }
+
+    // rappel « 3 = Collège X », l'admin saisit un id
+    // htmlspecialchars : EasyAdmin rend l'aide en html brut
+    private function establishmentList(): string
+    {
+        return implode(', ', array_map(
+            static fn (Establishment $e) => $e->getId().' = '.htmlspecialchars($e->getName(), \ENT_QUOTES),
+            $this->establishments->findBy([], ['id' => 'ASC'])
+        ));
     }
 
     public function configureActions(Actions $actions): Actions
@@ -111,27 +125,24 @@ class NotificationCrudController extends AbstractCrudController
     {
         /** @var Notification $notification */
         $notification = $context->getEntity()->getInstance();
-
-        if ($this->send($notification)) {
-            $this->addFlash('success', 'Notification envoyée.');
-        } else {
-            $this->addFlash('danger', 'Hub Mercure injoignable — notification non envoyée.');
-        }
+        $this->send($notification);
 
         return $this->redirect(
             $this->urlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl()
         );
     }
 
-    private function send(Notification $notification): bool
+    // sans sentAt, ni direct ni rejeu : l'échec doit se voir
+    private function send(Notification $notification): void
     {
         if (!$this->notifier->publish($notification->getMercureTopic(), $notification->toMercurePayload())) {
-            return false;
+            $this->addFlash('danger', 'Hub Mercure injoignable — notification NON envoyée. Réessayez avec « Envoyer maintenant ».');
+
+            return;
         }
 
         $notification->setSentAt(new \DateTimeImmutable());
         $this->em->flush();
-
-        return true;
+        $this->addFlash('success', 'Notification envoyée.');
     }
 }

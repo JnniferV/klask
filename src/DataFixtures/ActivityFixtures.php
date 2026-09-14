@@ -22,29 +22,28 @@ class ActivityFixtures extends Fixture implements DependentFixtureInterface
     /**
      * @var list<array{0: string, 1: string, 2: string, 3: float, 4: float}>
      */
-    // 1 stand par sphère (6 total), plusieurs intervenants décrits dans description
-    // coordonnées (x%, y%) centrées sur la sphère
+    // 1 stand par sphère, coordonnées centrées sur la sphère
     private const STANDS = [
-        // [nom, description, sphère, x%, y%] — pourcentages du cadre image
-        // webp rognées au ras du bâtiment : le plan occupe 0–100 % des deux axes
-        // valeurs d'origine, restent justes après fixtures:load, réglage fin via /admin → placer sur la carte
-        // variantes alerte : marge pour flèches d'évacuation, pas de pin (OVERLAY masqué), pas de calage
-        ['Stand CRÉATIF',      'Atelier céramique, design graphique et architecture. 3-4 intervenants métiers créatifs.',              'CRÉATIF',     45.0, 18.0],
-        ['Stand RIGOUREUX',    'Comptabilité, droit et audit. 3-4 intervenants métiers de la gestion et du droit.',                    'RIGOUREUX',   65.0, 18.0],
-        ['Stand NOUVEAUTÉ',    'Tech & IA, cybersécurité et réalité virtuelle. 3-4 intervenants du numérique.',                        'NOUVEAUTÉ',   85.0, 18.0],
-        ['Stand EXTÉRIEUR',    'Environnement, agriculture et sport. 3-4 intervenants métiers de terrain.',                            'EXTÉRIEUR',   45.0, 42.0],
-        ['Stand COMMUNIQUER',  'RH, journalisme et réseaux sociaux. 3-4 intervenants métiers de la communication.',                    'COMMUNIQUER', 65.0, 42.0],
-        ['Stand UTILE',        'Soins, éducation et sécurité. 3-4 intervenants métiers du service à la personne.',                     'UTILE',       85.0, 42.0],
+        // [nom, description, sphère, x%, y%] du cadre image, pas du bâtiment
+        // le plan mesuré n'occupe que x 18,7–81,2 % et y 12,1–94,3 %
+        // grille 3x2 dans le hall, réglage fin via /admin
+        ['Stand CRÉATIF',      'Atelier céramique, design graphique et architecture. 3-4 intervenants métiers créatifs.',              'CRÉATIF',     46.0, 42.0],
+        ['Stand RIGOUREUX',    'Comptabilité, droit et audit. 3-4 intervenants métiers de la gestion et du droit.',                    'RIGOUREUX',   60.0, 42.0],
+        ['Stand NOUVEAUTÉ',    'Tech & IA, cybersécurité et réalité virtuelle. 3-4 intervenants du numérique.',                        'NOUVEAUTÉ',   74.0, 42.0],
+        ['Stand EXTÉRIEUR',    'Environnement, agriculture et sport. 3-4 intervenants métiers de terrain.',                            'EXTÉRIEUR',   46.0, 62.0],
+        ['Stand COMMUNIQUER',  'RH, journalisme et réseaux sociaux. 3-4 intervenants métiers de la communication.',                    'COMMUNIQUER', 60.0, 62.0],
+        ['Stand UTILE',        'Soins, éducation et sécurité. 3-4 intervenants métiers du service à la personne.',                     'UTILE',       74.0, 62.0],
     ];
 
     /**
      * @var list<array{0: string, 1: string, 2: string, 3: float, 4: float}>
      */
-    // activités hors sphère — atelier et conférence, horaire renseigné par l'admin en dernier moment
+    // hors sphère, horaire saisi par l'admin au dernier moment
     private const STANDALONE = [
         // [nom, description, categoryRef, x%, y%]
-        ['Atelier Qui est-ce ?', 'Atelier interactif : devine le métier caché derrière des indices. Seul ou en groupe, 15 min chrono.', ActivityCategoryFixtures::CATEGORY_ATELIER_REFERENCE,    65.0, 28.0],
-        ['Conférence Métiers',   'Conférence plénière de 20 min : panorama des secteurs qui recrutent et témoignages de pros.',          ActivityCategoryFixtures::CATEGORY_CONFERENCE_REFERENCE, 65.0, 58.0],
+        // salles du bas, hors du hall pour éviter les sphères
+        ['Atelier Qui est-ce ?', 'Atelier interactif : devine le métier caché derrière des indices. Seul ou en groupe, 15 min chrono.', ActivityCategoryFixtures::CATEGORY_ATELIER_REFERENCE,    50.0, 77.0],
+        ['Conférence Métiers',   'Conférence plénière de 20 min : panorama des secteurs qui recrutent et témoignages de pros.',          ActivityCategoryFixtures::CATEGORY_CONFERENCE_REFERENCE, 68.0, 77.0],
     ];
 
     public function load(ObjectManager $manager): void
@@ -54,7 +53,7 @@ class ActivityFixtures extends Fixture implements DependentFixtureInterface
             mkdir($outputDir, 0777, true);
         }
 
-        // supprime les QR obsolètes avant régénération (évite l'accumulation à chaque fixtures:load)
+        // supprime les QR obsolètes avant régénération
         foreach (glob($outputDir.'act-*.png') ?: [] as $old) {
             unlink($old);
         }

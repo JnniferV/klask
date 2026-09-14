@@ -7,9 +7,9 @@ const inactivityMin = cfg.inactivityMin ?? 25;
 const INACTIVE = ` est inactif depuis ${inactivityMin} min`;
 const toasted = new Set();
 
-function toast(msg) {
+function toast(msg, cls = "") {
     const el = document.createElement("div");
-    el.className = "event-alert-banner";
+    el.className = "event-alert-banner" + (cls ? " " + cls : "");
     el.textContent = msg;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 8000);
@@ -116,6 +116,11 @@ async function poke(card) {
                 "). Vérifiez la configuration du groupe.",
         );
     else {
+        // centré comme la notif élève
+        toast(
+            "Signal envoyé à " + card.dataset.pseudo,
+            "event-alert-banner--centered",
+        );
         // sans ça checkInactive re-signale le même élève 60 sec plus tard
         card.dataset.lastScan = String(Math.floor(Date.now() / 1000));
         card.classList.remove("student-card--alert");

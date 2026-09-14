@@ -45,7 +45,7 @@ class EventCrudController extends AbstractCrudController
         yield TextField::new('name', 'Nom');
         yield DateTimeField::new('beginningHourEvent', 'Début');
         yield DateTimeField::new('endHourEvent', 'Fin');
-        yield DateTimeField::new('resetAt', 'Réinitialisé le')->onlyOnIndex()->setDisabled(true);
+        yield DateTimeField::new('resetAt', 'Dernière réinit.')->onlyOnIndex()->setDisabled(true);
     }
 
     public function configureActions(Actions $actions): Actions
@@ -53,8 +53,8 @@ class EventCrudController extends AbstractCrudController
         $reset = Action::new('resetEvent', 'Réinitialiser', 'fa fa-refresh')
             ->linkToCrudAction('resetEvent')
             ->setCssClass('btn btn-warning')
-            ->setTemplatePath('admin/actions/reset_event.html.twig')
-            ->displayIf(static fn (Event $e) => !$e->isReset());
+            // pas de displayIf : reset rejouable, resetAt devient une date
+            ->setTemplatePath('admin/actions/reset_event.html.twig');
 
         return $actions
             ->add(Crud::PAGE_INDEX, $reset)

@@ -107,7 +107,19 @@ class ActivityCrudController extends AbstractCrudController
 
     public function deleteEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
+        $id = null;
+        if ($entityInstance instanceof Activity) {
+            // id et fichier QR perdus après, on les traite avant
+            $id = $entityInstance->getId();
+            $this->activityService->deleteQrCode($entityInstance);
+        }
+
         parent::deleteEntity($entityManager, $entityInstance);
         $this->mapService->invalidateCache();
+
+        // même canal que l'update, le pin disparaît sans recharger
+        if (null !== $id) {
+            $this->notifier->publish('map-update', ['type' => 'activity', 'action' => 'delete', 'id' => $id]);
+        }
     }
 }

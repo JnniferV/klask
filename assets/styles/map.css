@@ -21,7 +21,7 @@
 
 .map-wrapper {
     display: flex;
-    height: 100vh;
+    flex: 1;
     overflow: hidden;
     background: var(--c-map-bg) url('../images/fond-espace-clair.webp') center/cover;
     position: relative;
@@ -423,13 +423,13 @@
 }
 
 @media (min-width: 768px) {
+    /* --anchored : lu par positionBubble, le breakpoint reste ici */
     .activity-bubble {
-        position: absolute;
+        --anchored: 1;
         left: auto; right: auto; bottom: auto;
         min-width: 240px;
         max-width: min(380px, 86vw);
         max-height: min(60vh, 420px);
-        z-index: 20;
         border-radius: 18px 18px 18px 6px;
         border: 6px solid transparent;
         background:

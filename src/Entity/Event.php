@@ -96,11 +96,6 @@ class Event
         return $this;
     }
 
-    public function isReset(): bool
-    {
-        return null !== $this->resetAt;
-    }
-
     /**
      * @return Collection<int, Group>
      */

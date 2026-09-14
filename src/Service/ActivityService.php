@@ -44,6 +44,18 @@ class ActivityService
         $activity->setQrcodeToken($token)->setQrcode(self::QRCODE_DIR.'/'.$fileName);
     }
 
+    // pendant de initQrCode, sinon le PNG reste orphelin
+    public function deleteQrCode(Activity $activity): void
+    {
+        $path = $activity->getQrcode();
+        if (null === $path) {
+            return;
+        }
+
+        // basename : impossible de sortir du dossier des QR
+        @unlink($this->projectDir.'/public/'.self::QRCODE_DIR.'/'.basename($path));
+    }
+
     public function createFromMap(Sphere $sphere, ActivityCategory $category, string $name, ?string $description, float $x, float $y): Activity
     {
         $activity = (new Activity())

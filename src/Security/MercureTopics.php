@@ -40,6 +40,12 @@ final readonly class MercureTopics
             }
         }
 
+        // commun aux deux rôles, notif par établissement
+        $establishment = $user->getGroup()?->getEstablishment();
+        if (null !== $establishment) {
+            $topics[] = 'event-alert/establishment/'.$establishment->getId();
+        }
+
         return $topics;
     }
 }

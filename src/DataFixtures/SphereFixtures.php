@@ -24,6 +24,8 @@ class SphereFixtures extends Fixture
             $sphere = new Sphere();
             $sphere->setName($name);
             $sphere->setColor($color);
+            // 6 % => 12 % de large, les 6 sphères tiennent sans se chevaucher
+            $sphere->setRadius(6.0);
 
             $manager->persist($sphere);
             $this->addReference('sphere_'.$name, $sphere);

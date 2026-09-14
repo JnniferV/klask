@@ -1,0 +1,87 @@
+<div id="sidebar-trigger-zone" class="trigger-tab">
+    <span class="arrow-icon">◀</span>
+</div>
+
+<div id="sidebar-panel" class="sidebar-container">
+
+    <div class="sidebar-main-box">
+
+        <div class="sidebar-content">
+
+            {% if is_granted('ROLE_ACCOMPANYING') %}
+
+                <div class="info-block">
+                    <span class="label">MON GROUPE</span>
+                    <span class="value">{{ currentUser.group.code ?? '-' }}</span>
+                </div>
+
+                <div class="info-block">
+                    <span class="label">ÉLÈVES INSCRITS</span>
+                    <span class="value" id="students-count">{{ groupStudents|length }}</span>
+                </div>
+
+                <div id="group-list" class="group-grid">
+                    {% for student in groupStudents %}
+                        {% set inactive = student.lastScanAt and student.lastScanAt < ("now"|date('U') - inactivityMin|default(25) * 60) %}
+                        <div class="student-card{{ (student.blockedUntil and student.blockedUntil > date()) or inactive ? ' student-card--alert' : '' }}" data-id="{{ student.id }}" data-pseudo="{{ student.pseudo }}"{% if student.lastScanAt %} data-last-scan="{{ student.lastScanAt }}"{% endif %}>
+                            <span class="avatar avatar--sm">
+                                <img src="{{ asset(avatar(student.pseudo, 'petitvaisseau')) }}" alt="{{ student.pseudo }}" loading="lazy" decoding="async">
+                            </span>
+                            <span class="student-pseudo">{{ student.pseudo }}</span>
+                            <span class="student-score">{{ student.score }} pts</span>
+                        </div>
+                    {% else %}
+                        <p class="group-loading">Aucun élève dans ce groupe.</p>
+                    {% endfor %}
+                </div>
+
+            {% elseif currentUser %}
+
+                <div class="info-block">
+                    <span class="value">{{ currentUser.pseudo }}</span>
+                </div>
+
+                <div class="avatar-block">
+                    <span class="avatar avatar--md">
+                        <img src="{{ asset(avatar(currentUser.pseudo, 'vaisseau')) }}"
+                             alt="Avatar de {{ currentUser.pseudo }}" loading="lazy" decoding="async">
+                    </span>
+                </div>
+
+                <div class="info-block school-block">
+                    <span class="value">{{ currentUser.group?.establishment?.name|default('ÉTABLISSEMENT') }}</span>
+                    <span class="value">{{ currentUser.group?.name|default('CLASSE') }}</span>
+                </div>
+
+                <div class="info-block score-block">
+                    <span class="label">SCORE PERSO:</span>
+                    <span class="value" id="score-perso">{{ userScore|default(0) }}</span>
+                </div>
+
+                <div class="info-block score-block">
+                    <span class="label">SCORE GROUPE:</span>
+                    <span class="value" id="score-groupe">{{ groupScore|default(0) }}</span>
+                </div>
+
+            {% else %}
+                <div class="info-block">
+                    <p>Données indisponibles.</p>
+                </div>
+            {% endif %}
+
+            <div class="footer-block">
+                {% if is_granted('ROLE_STUDENT') %}
+                    <a href="{{ path('app_bilan_eleve') }}" class="mentions-link">MON BILAN</a>
+                {% elseif is_granted('ROLE_ACCOMPANYING') %}
+                    <a href="{{ path('app_bilan_groupe') }}" class="mentions-link">BILAN GROUPE</a>
+                {% endif %}
+                <a href="{{ path('app_legal') }}" class="mentions-link">MENTIONS LEGALES</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% if is_granted('ROLE_ACCOMPANYING') %}
+    {% include 'structure/confirm_dialog.html.twig' with {id: 'poke-confirm', ok: 'Envoyer'} %}
+{% endif %}

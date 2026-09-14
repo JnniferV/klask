@@ -1,0 +1,15 @@
+includes:
+    # Dette existante figée : PHPStan la tolère mais refuse toute NOUVELLE erreur.
+    # Régénérer après une correction en masse : vendor/bin/phpstan analyse --generate-baseline
+    - phpstan-baseline.neon
+
+parameters:
+    # Niveau 8 : traque les valeurs nulles utilisées sans vérification, cause n°1
+    # des pages blanches en production.
+    level: 8
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/

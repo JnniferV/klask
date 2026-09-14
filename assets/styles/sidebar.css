@@ -1,0 +1,206 @@
+@font-face {
+    font-family: 'Fredoka One';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/fredoka-one-400.woff2') format('woff2');
+}
+
+.trigger-tab {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 58px;
+    background: var(--panel-bg);
+    border: var(--frame-bd);
+    border-right: none;
+    border-radius: 26px 0 0 26px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--panel-txt);
+    z-index: 10052;
+    box-shadow: var(--frame-sh);
+}
+
+.arrow-icon {
+    font-size: 1.1rem;
+    transition: transform .3s;
+}
+
+.trigger-tab.is-open .arrow-icon {
+    transform: scaleX(-1);
+}
+
+.sidebar-container {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: -100%;
+    width: min(400px, 70vw);
+    z-index: 10050;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--f-sidebar);
+    transition: right .36s cubic-bezier(.25, 1, .5, 1);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.sidebar-container.open {
+    right: 0;
+}
+
+.sidebar-container:has(.group-grid) {
+    width: min(520px, 90vw);
+}
+
+.sidebar-main-box {
+    flex: 1;
+    min-height: 0;
+    margin: clamp(8px, 2vw, 10px);
+    border: 4px solid transparent;
+    background:
+        linear-gradient(var(--panel-bg), var(--panel-bg)) padding-box,
+        var(--metal-grad) border-box;
+    border-radius: 18px;
+    box-shadow: var(--frame-sh);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.sidebar-content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(14px, 3vw, 16px) clamp(12px, 3vw, 14px) clamp(10px, 2vw, 12px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    gap: 10px;
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+}
+
+.school-block {
+    padding: 8px 10px;
+    background: rgba(0, 0, 0, .06);
+    border-radius: var(--r);
+}
+
+.score-block {
+    padding: 6px 10px;
+    border-top: 1px solid var(--c-metal);
+}
+
+.label {
+    font: 700 .7rem/1 var(--f-mono);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--panel-txt);
+}
+
+.value {
+    font-size: clamp(1.15rem, 4vw, 1.4rem);
+    color: var(--panel-txt);
+    font-weight: 700;
+    word-break: break-word;
+}
+
+.avatar-block {
+    display: flex;
+    justify-content: center;
+    padding: 6px 0;
+}
+
+.avatar--md {
+    width: clamp(140px, 40vw, 175px);
+}
+
+.avatar--sm {
+    width: clamp(82px, 22vw, 88px);
+}
+
+.footer-block {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--c-metal);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 16px;
+}
+
+.mentions-link {
+    font: .65rem/1 var(--f-mono);
+    color: var(--panel-txt);
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color .15s;
+}
+
+.mentions-link:hover {
+    color: var(--c-accent);
+}
+
+.group-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: clamp(10px, 2vw, 12px) clamp(6px, 1.5vw, 8px);
+    padding: 8px 2px;
+}
+
+.student-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 110px;
+    justify-self: center;
+}
+
+.student-card:hover .avatar--sm {
+    box-shadow: 0 0 0 3px var(--c-accent);
+}
+
+.student-card--alert .avatar--sm {
+    animation: alert-blink 1s ease-in-out infinite;
+}
+
+@keyframes alert-blink {
+    50% {
+        box-shadow: 0 0 18px 6px rgba(255, 23, 68, .9);
+    }
+}
+
+.student-pseudo {
+    font: 600 .68rem/1.2 var(--f-mono);
+    text-align: center;
+    word-break: break-word;
+    color: var(--panel-txt);
+}
+
+.student-score {
+    font: .65rem/1 var(--f-mono);
+    color: var(--c-accent);
+}
+
+.group-loading {
+    text-align: center;
+    font: .8rem/1.5 var(--f-mono);
+    color: var(--c-muted);
+    padding: 1rem 0;
+}

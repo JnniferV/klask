@@ -1,4 +1,6 @@
-.page-map main { padding: 0; display: block; height: 100vh; overflow: hidden; } 
+/* main est déjà `flex: 1` (app.css) : il suffit d'étirer l'enfant, sans hauteur fixe —
+   100vh ajoutait la hauteur du header sticky et ignorait la barre d'URL mobile */
+.page-map main { padding: 0; overflow: hidden; align-items: stretch; }
 .page-map footer { display: none; }
 
 .page-map:not(.page-map--student) .site-header { z-index: 10002; }
@@ -21,7 +23,7 @@
 
 .map-wrapper {
     display: flex;
-    height: 100vh;
+    flex: 1;
     overflow: hidden;
     background: var(--c-map-bg) url('../images/fond-espace-clair.webp') center/cover;
     position: relative;
@@ -409,13 +411,13 @@
 }
 
 @media (min-width: 768px) {
+    /* --anchored : lu par positionBubble, le breakpoint reste ici */
     .activity-bubble {
-        position: absolute;
+        --anchored: 1;
         left: auto; right: auto; bottom: auto;
         min-width: 240px;
         max-width: min(380px, 86vw);
         max-height: min(60vh, 420px);
-        z-index: 20;
         border-radius: 18px 18px 18px 6px;
     }
     .activity-bubble::after {

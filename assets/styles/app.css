@@ -80,8 +80,9 @@ footer {
 .hud-window { width: min(96%, 950px); max-width: 950px; margin: clamp(1rem, 3vw, 2rem) auto; }
 
 .container { padding: 0 0 2rem; }
-.container a { color: var(--panel-txt); }
-.container a:hover { text-decoration: none; }
+/* liens sur panneau, :where laisse leur couleur aux liens-boutons */
+:where(.container, .hud-window) a { color: var(--panel-txt); }
+:where(.container, .hud-window) a:hover { text-decoration: none; }
 
 .container > h1,
 .hud-window h1 {
@@ -243,21 +244,22 @@ input[type="submit"]:hover,
 [data-theme="dark"] .theme-toggle::before { content: '☀️'; }
 .theme-toggle:hover { border-color: var(--c-gold); }
 
-.welcome-card { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; padding: .5rem 0; }
-.welcome-score { font: 700 .82rem/1 var(--f-mono); text-transform: uppercase; letter-spacing: 2px; }
+.welcome-card { display: flex; flex-direction: column; align-items: center; gap: .7rem; }
+.welcome-score { font: 700 clamp(1rem, 3.6vw, 1.25rem)/1 var(--f-mono); text-transform: uppercase; letter-spacing: 2px; }
 .block-actions { margin-top: 1.5rem; text-align: center; }
 
-.quiz-instruction { font: .92rem/1.6 var(--f-body); margin: .5rem 0 .6rem; }
+.quiz-instruction { font: clamp(1.05rem, 3.4vw, 1.25rem)/1.55 var(--f-body); margin: .5rem 0 .6rem; }
 .quiz-instruction strong { font-weight: 800; }
 .quiz-instruction em {
     display: block;
     margin-top: .6rem;
     padding: .5rem .7rem;
-    border-left: 3px solid var(--c-gold);
+    border-left: 3px solid currentColor;
     border-radius: 0 var(--r) var(--r) 0;
     background: rgba(255, 255, 255, .05);
-    font-size: .85rem;
+    font: 700 1.2rem/1.4 var(--f-body);
     font-style: normal;
+    color: var(--c-err);
 }
 .quiz-table { width: 100%; border-spacing: 0 8px; margin-bottom: .4rem; }
 .quiz-table td {

@@ -488,13 +488,23 @@ function handleMapUpdate(e) {
     }
 
     if (data.type === "activity") {
-        if (data.action === "create") {
-            OVERLAY.appendChild(createPin(data, data.color));
-        } else {
-            const pin = document.getElementById("pin-" + data.id);
-            if (pin) applyActivity(pin, data);
-            else OVERLAY.appendChild(createPin(data, data.color));
+        const pin = document.getElementById("pin-" + data.id);
+
+        if (data.action === "delete") {
+            pin?.remove();
+            coordsMap.delete(data.id);
+            BUBBLE.hidden = true; // la bulle peut décrire le pin supprimé
+            // la flèche pointait peut-être dessus
+            if (PARCOURS_MAP.has(data.id)) {
+                document.querySelector(".parcours-layer")?.remove();
+                renderParcoursPath(coordsMap);
+            }
+            return;
         }
+
+        // id inconnu : création, id connu : mise à jour
+        if (pin) applyActivity(pin, data);
+        else OVERLAY.appendChild(createPin(data, data.color));
         coordsMap.set(data.id, {
             x: data.pointXActivity,
             y: data.pointYActivity,
@@ -502,32 +512,29 @@ function handleMapUpdate(e) {
     }
 }
 
-// bulle d'activité positionnée à côté du pin cliqué
+// hors de .map-canvas : son transform ferait viser le canvas et non l'écran
+// mobile : bandeau bas en CSS, desktop : ancrée au pin en coordonnées écran
 function positionBubble(pin) {
-    if (getComputedStyle(BUBBLE).position === "fixed") {
-        BUBBLE.style.cssText = "";
-        BUBBLE.hidden = false;
-        return;
-    }
-    const cW = OVERLAY.offsetWidth;
-    const cH = OVERLAY.offsetHeight;
-    const pinLeft = (parseFloat(pin.style.left) / 100) * cW;
-    const pinTop = (parseFloat(pin.style.top) / 100) * cH;
-    const pinHalf = pin.offsetWidth / 2;
-
-    BUBBLE.style.cssText = "left:-9999px;top:0;transform:none;bottom:auto";
+    BUBBLE.style.cssText = "";
     BUBBLE.hidden = false;
+    if (getComputedStyle(BUBBLE).getPropertyValue("--anchored").trim() !== "1")
+        return;
 
-    const bubW = BUBBLE.offsetWidth;
-    const bubH = BUBBLE.offsetHeight;
+    const p = pin.getBoundingClientRect();
+    const w = BUBBLE.offsetWidth;
+    const h = BUBBLE.offsetHeight;
+    // 25px = pointe de la flèche, alignée sur le pin
+    const left = Math.min(
+        Math.max(8, p.left + p.width / 2 - 25),
+        innerWidth - w - 8,
+    );
+    const above = p.top - h - 12;
+    const top = Math.min(
+        Math.max(8, above >= 8 ? above : p.bottom + 12),
+        innerHeight - h - 8,
+    );
 
-    let left = pinLeft + pinHalf + 10;
-    if (left + bubW > cW) left = pinLeft - pinHalf - bubW - 10;
-
-    let top = pinTop - bubH / 2;
-    top = Math.max(4, Math.min(top, cH - bubH - 4));
-
-    BUBBLE.style.cssText = `left:${left}px;top:${top}px;transform:none;bottom:auto`;
+    BUBBLE.style.cssText = `left:${left}px;top:${top}px`;
 }
 
 //un stand hors des 3 sphères préférées rapporte moins
@@ -640,12 +647,17 @@ document
         touchOriginTx = 0,
         touchOriginTy = 0;
 
+    // cadre réellement dessiné dans le webp du plan : le reste est de la marge blanche
+    // (mesuré sur `cartes claire.webp` — x 18,7-81,2 %, y 12,1-94,3 %)
+    const PLAN = { x: 0.187, y: 0.121, w: 0.625, h: 0.822 };
+
     function computeMinScale() {
         if (!canvas.offsetHeight) return 0.3;
-        return Math.min(
-            area.clientWidth / canvas.offsetWidth,
-            area.clientHeight / canvas.offsetHeight,
-        );
+        const sx = area.clientWidth / (canvas.offsetWidth * PLAN.w),
+            sy = area.clientHeight / (canvas.offsetHeight * PLAN.h);
+        // mobile : le plan remplit l'écran (aucun vide) ; à partir de 768px il tient en entier,
+        // l'écran étant paysage et le plan portrait
+        return area.clientWidth < 768 ? Math.max(sx, sy) : Math.min(sx, sy);
     }
 
     function clampPan() {
@@ -668,8 +680,9 @@ document
     function initFit() {
         SCALE_MIN = computeMinScale();
         scale = SCALE_MIN;
-        tx = 0;
-        ty = 0;
+        // centré sur le plan, pas sur l'image : sinon la marge blanche entre dans le cadrage
+        tx = area.clientWidth / 2 - (PLAN.x + PLAN.w / 2) * canvas.offsetWidth * scale;
+        ty = area.clientHeight / 2 - (PLAN.y + PLAN.h / 2) * canvas.offsetHeight * scale;
         clampPan();
         applyTransform();
     }
